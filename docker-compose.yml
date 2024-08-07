@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+
+  fast:
+    build: .
+    container_name: fast
+    restart: always
+    ports:
+      - "8000:8000"
+    command:
+      - bash
+      - /app/entrypoint.sh
+    volumes:
+      - ./src/:/app/
+    env_file:
+      - .env

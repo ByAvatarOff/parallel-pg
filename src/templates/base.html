@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Образец шаблона</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/theme/monokai.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/base.css') }}">
+</head>
+<body>
+<div id="top-alert-container"></div>
+<div class="left-column visible-left" id="left-column">
+    <button type="button" id="toggle-menu" class="toggle-button">&#x25C0;</button>
+    <form id="isolation-form" class="select-container" action="{{ url_for('set_isolation_level') }}" method="POST">
+        <select name="isolation-operation" id="isolation-select">
+            {% for isolation in isolations %}
+            <option value="{{ isolation }}">{{ isolation }}</option>
+            {% endfor %}
+        </select>
+        <button type="button" onclick="submitIsolationLevel()">Изменить уровень изоляции</button>
+    </form>
+    <form id="lock-form" class="select-container" action="{{ url_for('set_lock_table') }}" method="POST">
+        <select name="lock-operation" id="lock-select">
+            {% for lock in locks %}
+            <option value="{{ lock }}">{{ lock }}</option>
+            {% endfor %}
+        </select>
+        <button type="button" onclick="submitLockLevel()">Изменить блокировку</button>
+    </form>
+</div>
+
+<div class="main-content">
+    <form id="form-queries" action="{{ url_for('execute_transactions') }}" method="POST">
+        <div class="form-container">
+            <textarea id="query1" name="query1" required></textarea>
+            <textarea id="query2" name="query2" required></textarea>
+        </div>
+        <button class="submit-form-button" type="button" onclick="sendQueries()">Отправить</button>
+    </form>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/mode/sql/sql.min.js"></script>
+<script src="{{ url_for('static', path='js/base.js') }}"></script>
+</body>
+</html>
