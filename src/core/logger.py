@@ -1,5 +1,4 @@
 import os
-from typing import Callable
 import logging.config
 from src.core.settings import settings
 
@@ -32,12 +31,3 @@ LOGGING_CONFIG = {
 
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
-
-
-def transaction_detail(func: Callable) -> Callable:
-    async def wrapper(*args, **kwargs) -> None:
-        logger.info("-------------transactions begin--------------")
-        result = await func(*args, **kwargs)
-        logger.info("-----------transactions end-----------------")
-        return result
-    return wrapper

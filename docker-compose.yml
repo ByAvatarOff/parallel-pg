@@ -2,16 +2,38 @@ version: "3.9"
 
 services:
 
-  fast:
+  fast_app:
     build: .
-    container_name: fast
+    container_name: fast_app
     restart: always
     ports:
       - "8000:8000"
     command:
       - bash
-      - /app/entrypoint.sh
+      - /app/src/entrypoint.sh
     volumes:
-      - ./src/:/app/
+      - ./src/:/app/src/
     env_file:
       - .env
+    depends_on:
+      fast_db:
+        condition: service_healthy
+
+  fast_db:
+    image: postgres:16-alpine
+    container_name: fast_db
+    restart: always
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U ${DB_USER} -p ${DB_PORT}
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  postgres_data:

@@ -10,6 +10,14 @@ app_router = APIRouter(
 )
 
 
+@app_router.get("/init_db")
+async def init_db(
+        db_service: DBTransactionService = Depends(get_transaction_Service)
+):
+    response = await db_service.fill_db()
+    return {"data": response}
+
+
 @app_router.post("/execute_transactions")
 async def execute_transactions(
         data: SqlSchema = Body(...),

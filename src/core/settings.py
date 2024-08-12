@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from functools import cache
 from src.transactions.schema.sql_schema import IsolationLevel, PostgresLock
 
@@ -9,6 +10,8 @@ class AppSettings(BaseSettings):
     app_name: str = "Fast Postgres"
     description: str = "Fast Postgres"
     log_dir: str = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
+    files_directory: Path = Path(__file__).resolve().parent.parent / "files"
+    sql_file: Path = files_directory / "sql" / "warehouse.sql"
 
 
 class DBSettings(BaseSettings):

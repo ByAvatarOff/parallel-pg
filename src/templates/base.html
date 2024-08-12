@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Образец шаблона</title>
+    <title>Parallel PG</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/theme/monokai.min.css">
     <link rel="stylesheet" href="{{ url_for('static', path='css/base.css') }}">
@@ -11,6 +11,9 @@
 <body>
 <div id="top-alert-container"></div>
 <div class="left-column visible-left" id="left-column">
+    <div class="select-container">
+        <button type="button" onclick=initDB("{{ url_for('init_db') }}")>Create DB</button>
+    </div>
     <button type="button" id="toggle-menu" class="toggle-button">&#x25C0;</button>
     <form id="isolation-form" class="select-container" action="{{ url_for('set_isolation_level') }}" method="POST">
         <select name="isolation-operation" id="isolation-select">
@@ -18,7 +21,7 @@
             <option value="{{ isolation }}">{{ isolation }}</option>
             {% endfor %}
         </select>
-        <button type="button" onclick="submitIsolationLevel()">Изменить уровень изоляции</button>
+        <button type="button" onclick=submitIsolationLevel()>Change isolation level</button>
     </form>
     <form id="lock-form" class="select-container" action="{{ url_for('set_lock_table') }}" method="POST">
         <select name="lock-operation" id="lock-select">
@@ -26,7 +29,7 @@
             <option value="{{ lock }}">{{ lock }}</option>
             {% endfor %}
         </select>
-        <button type="button" onclick="submitLockLevel()">Изменить блокировку</button>
+        <button type="button" onclick=submitLockLevel()>Change lock</button>
     </form>
 </div>
 
@@ -36,7 +39,7 @@
             <textarea id="query1" name="query1" required></textarea>
             <textarea id="query2" name="query2" required></textarea>
         </div>
-        <button class="submit-form-button" type="button" onclick="sendQueries()">Отправить</button>
+        <button class="submit-form-button" type="button" onclick=sendQueries()>Send</button>
     </form>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/codemirror.min.js"></script>

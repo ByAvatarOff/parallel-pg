@@ -12,4 +12,4 @@ COPY pyproject.toml .
 COPY poetry.lock .
 RUN poetry install --no-root
 
-COPY src .
+COPY src ./src

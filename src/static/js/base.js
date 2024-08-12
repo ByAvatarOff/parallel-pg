@@ -57,14 +57,14 @@ async function sendQueries() {
 async function submitIsolationLevel() {
     const form = document.getElementById('isolation-form');
     const formData = new FormData(form);
-    const isolation_level = formData.get('isolation-operation');
+    const isolationLevel = formData.get('isolation-operation');
 
     const response = await fetch(form.action, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({isolation_level: isolation_level})
+        body: JSON.stringify({isolation_level: isolationLevel})
     });
 
     const result = await response.json();
@@ -74,16 +74,24 @@ async function submitIsolationLevel() {
 async function submitLockLevel() {
     const form = document.getElementById('lock-form');
     const formData = new FormData(form);
-    const lock_level = formData.get('lock-operation');
+    const lockLevel = formData.get('lock-operation');
 
     const response = await fetch(form.action, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({lock_level: lock_level})
+        body: JSON.stringify({lock_level: lockLevel})
     });
 
+    const result = await response.json();
+    showTopAlert(result.data)
+}
+
+async function initDB(sendUrl) {
+    const response = await fetch(sendUrl, {
+        method: 'GET'
+    });
     const result = await response.json();
     showTopAlert(result.data)
 }
