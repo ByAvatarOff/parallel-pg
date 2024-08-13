@@ -1,18 +1,17 @@
-from sqlalchemy.exc import IntegrityError, DBAPIError
-
-from src.transactions.schema.sql_schema import SqlSchema
 import asyncio
-from sqlalchemy import text
-from src.core.db_conf import AsyncSessionFactory
-from src.transactions.domain.repos.repo import TransactionRawRepo
+
+from sqlalchemy.exc import DBAPIError, IntegrityError
+
 from src.reader.abstract import AbstractReader
+from src.transactions.domain.repos.repo import TransactionRawRepo
+from src.transactions.schema.sql_schema import SqlSchema
 
 
 class DBTransactionService:
     def __init__(
-            self,
-            transaction_repo: TransactionRawRepo,
-            reader: AbstractReader
+        self,
+        transaction_repo: TransactionRawRepo,
+        reader: AbstractReader,
     ) -> None:
         self.transaction_repo = transaction_repo
         self.reader = reader
@@ -25,13 +24,20 @@ class DBTransactionService:
         except IntegrityError:
             return "DB is already filled"
 
+    async def clear_count(self) -> str:
+        try:
+            await self.transaction_repo.clear_count()
+            return "Count column cleaned"
+        except IntegrityError:
+            return "DB is not filled"
 
     async def transaction(self, query: str) -> None:
         if not query:
             return
         try:
             await self.transaction_repo.execute_transaction(query=query)
-        except DBAPIError: ...
+        except DBAPIError:
+            ...
 
     async def run(self, data: SqlSchema):
         tasks = [

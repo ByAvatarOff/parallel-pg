@@ -96,6 +96,14 @@ async function initDB(sendUrl) {
     showTopAlert(result.data)
 }
 
+async function clearCountColumn(sendUrl) {
+    const response = await fetch(sendUrl, {
+        method: 'GET'
+    });
+    const result = await response.json();
+    showTopAlert(result.data)
+}
+
 function showTopAlert(message) {
     const alertElement = document.createElement('div');
     alertElement.classList.add('top-alert');

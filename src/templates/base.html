@@ -14,6 +14,9 @@
     <div class="select-container">
         <button type="button" onclick=initDB("{{ url_for('init_db') }}")>Create DB</button>
     </div>
+    <div class="select-container">
+        <button type="button" onclick=clearCountColumn("{{ url_for('clear_count') }}")>Clear count</button>
+    </div>
     <button type="button" id="toggle-menu" class="toggle-button">&#x25C0;</button>
     <form id="isolation-form" class="select-container" action="{{ url_for('set_isolation_level') }}" method="POST">
         <select name="isolation-operation" id="isolation-select">
