@@ -1,6 +1,6 @@
 import asyncio
 
-from sqlalchemy import text
+from sqlalchemy import text, Sequence, RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db_conf import AsyncSessionFactory
@@ -29,23 +29,18 @@ class TransactionRawRepo:
             ),
         )
 
-    async def get_counter(self, session: AsyncSession) -> int:
+    async def get_rows(self, session: AsyncSession) -> Sequence[RowMapping]:
         record = await session.execute(
             text(
-                f"select {settings.db.main_table_name}.count from {settings.db.main_table_name} where id = 1",
+                f"select * from {settings.db.main_table_name}",
             ),
         )
-        return record.first()[0]
+        return record.mappings().all()
 
-    async def get_count_records(self, session: AsyncSession) -> int:
-        record = await session.execute(
-            text(f"SELECT count(*) FROM {settings.db.main_table_name}"),
-        )
-        return record.first()[0]
-
-    async def fill_db(self, command: str) -> None:
+    async def fill_db(self, commands: list[str]) -> None:
         async with self.session_factory() as session:
-            await session.execute(text(command))
+            for command in commands:
+                await session.execute(text(command))
 
     async def clear_count(self) -> None:
         async with self.session_factory() as session:
@@ -55,13 +50,19 @@ class TransactionRawRepo:
                 ),
             )
 
-    async def execute_transaction(self, query: str) -> None:
+    async def execute_transaction(self, queries: str | list[str]) -> None:
         async with self.session_factory() as session:
             await self.set_isolation_level(session=session)
             await self.set_lock_table(session=session)
-            await self.get_count_records(session=session)
-            await session.execute(text(query))
-            await asyncio.sleep(0.2)
             logger.info(
-                f"Worker: {session.session_id}. Count records is {await self.get_counter(session)}",
+                f"Worker: {session.session_id}. records result before transaction {await self.get_rows(session)}",
+            )
+            if isinstance(queries, str):
+                await session.execute(text(queries))
+                await asyncio.sleep(0.2)
+            else:
+                for query in queries:
+                    await session.execute(text(query))
+            logger.info(
+                f"Worker: {session.session_id}. records result are {await self.get_rows(session)}",
             )

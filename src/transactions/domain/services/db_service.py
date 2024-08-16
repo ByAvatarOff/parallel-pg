@@ -18,8 +18,8 @@ class DBTransactionService:
 
     async def fill_db(self) -> str:
         try:
-            async for sql in self.reader.read():
-                await self.transaction_repo.fill_db(command=sql)
+            queries = [sql async for sql in self.reader.read()]
+            await self.transaction_repo.fill_db(commands=queries)
             return "DB successful filled"
         except IntegrityError:
             return "DB is already filled"
@@ -34,8 +34,13 @@ class DBTransactionService:
     async def transaction(self, query: str) -> None:
         if not query:
             return
+        if query[-1] == ";":
+            query = query[:-1]
+        queries = query.split(";")
         try:
-            await self.transaction_repo.execute_transaction(query=query)
+            if len(queries) > 1 and queries[-1] is not None:
+                return await self.transaction_repo.execute_transaction(queries=queries)
+            return await self.transaction_repo.execute_transaction(queries=query)
         except DBAPIError:
             ...
 
